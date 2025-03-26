@@ -3,10 +3,18 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import ReactDOM from 'react-dom/client'
 import { routeTree } from './routeTree.gen'
 import './index.css'
-
-const router = createRouter({ routeTree })
+import { ThemeProvider } from '@/components/theme/provider'
+import { scryfallService } from '@/lib/scryfall'
 
 const queryClient = new QueryClient()
+
+const router = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+    scryfallService,
+  },
+})
 
 const rootElement = document.getElementById('root')!
 
@@ -14,7 +22,9 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryClientProvider>,
   )
 }

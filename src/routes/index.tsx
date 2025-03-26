@@ -1,51 +1,74 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { Button } from '../components/ui/button'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { ArrowRightIcon, SearchIcon } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
   component: LandingPage,
 })
 
 function LandingPage() {
+  const navigate = useNavigate()
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
-      {/* Header */}
-      <header className="container mx-auto py-6 px-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Scryfall Personal</h1>
-        <div className="flex gap-4">
-          <Button variant="ghost">Search</Button>
-          <Button variant="ghost">My Decks</Button>
-          <Button>Get Started</Button>
-        </div>
-      </header>
-
+    <div className="from-background to-muted min-h-screen bg-gradient-to-b">
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
-        <h2 className="text-5xl font-bold mb-4">Build MTG Decks Offline</h2>
-        <p className="text-xl mb-8 max-w-2xl mx-auto text-gray-300">
+        <h2 className="text-foreground mb-4 text-5xl font-bold tracking-tight">Build MTG Decks Offline</h2>
+        <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-xl">
           A simple offline deck builder for Magic: The Gathering that uses the Scryfall API to search for cards.
         </p>
         <div className="flex justify-center gap-4">
-          <Button size="lg">Start Building</Button>
-          <Button size="lg" variant="outline">Browse Cards</Button>
+          <Button size="lg" className="gap-2">
+            <span>Start Building</span>
+            <ArrowRightIcon className="h-4 w-4" />
+          </Button>
+          <Button size="lg" variant="outline" className="gap-2">
+            <span>Browse Cards</span>
+            <SearchIcon className="h-4 w-4" />
+          </Button>
+        </div>
+      </section>
+
+      {/* Search Section */}
+      <section className="container mx-auto px-4 py-8">
+        <div className="bg-card mx-auto max-w-md rounded-lg border p-6 shadow-sm">
+          <h3 className="text-card-foreground mb-4 text-xl font-medium">Quick Search</h3>
+          <form
+            className="flex gap-2"
+            onSubmit={e => {
+              e.preventDefault()
+              const formData = new FormData(e.target as HTMLFormElement)
+              const query = formData.get('query')
+              if (!query) return
+
+              navigate({ to: '/search', search: { q: query as string } })
+            }}
+          >
+            <Input placeholder="Search for a card..." id="query" name="query" />
+            <Button type="submit" variant="secondary">
+              <SearchIcon />
+              Search
+            </Button>
+          </form>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="container mx-auto px-4 py-16">
-        <h3 className="text-3xl font-bold text-center mb-12">Features</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <FeatureCard 
-            title="Card Search" 
+        <h3 className="text-foreground mb-12 text-center text-3xl font-bold">Features</h3>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <FeatureCard
+            title="Card Search"
             description="Search cards from Scryfall's extensive database with powerful filtering options."
             icon="🔍"
           />
-          <FeatureCard 
-            title="Deck Building" 
+          <FeatureCard
+            title="Deck Building"
             description="Build and save decks locally with an intuitive drag-and-drop interface."
             icon="📚"
           />
-          <FeatureCard 
-            title="Offline Mode" 
+          <FeatureCard
+            title="Offline Mode"
             description="Access your decks and previously searched cards even without an internet connection."
             icon="💾"
           />
@@ -53,21 +76,28 @@ function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 mt-12 border-t border-gray-700 text-center text-gray-400">
-        <p>Powered by Scryfall API | Built with React, TypeScript & Tailwind</p>
-        <p className="mt-2">Based on <a href="https://github.com/Koakovski/Scryfall_Personal/" className="underline">Koakovski's Scryfall Personal</a></p>
+      <footer className="text-muted-foreground container mx-auto mt-12 border-t px-4 py-8 text-center">
+        <p>Powered by Scryfall API</p>
+        <p className="mt-2">
+          Based on{' '}
+          <a
+            href="https://github.com/Koakovski/Scryfall_Personal/"
+            className="text-primary hover:text-primary/80 underline"
+          >
+            Koakovski's Scryfall Personal
+          </a>
+        </p>
       </footer>
     </div>
   )
 }
 
-function FeatureCard({ title, description, icon }: { title: string, description: string, icon: string }) {
+function FeatureCard({ title, description, icon }: { title: string; description: string; icon: string }) {
   return (
-    <div className="bg-gray-800 p-6 rounded-lg border border-gray-700 hover:border-gray-500 transition">
-      <div className="text-4xl mb-4">{icon}</div>
-      <h4 className="text-xl font-bold mb-2">{title}</h4>
-      <p className="text-gray-300">{description}</p>
+    <div className="bg-card hover:border-primary/50 hover:bg-accent rounded-lg border p-6 shadow-sm transition">
+      <div className="mb-4 text-4xl">{icon}</div>
+      <h4 className="text-card-foreground mb-2 text-xl font-semibold">{title}</h4>
+      <p className="text-muted-foreground">{description}</p>
     </div>
   )
 }
-  
