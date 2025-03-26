@@ -18,7 +18,7 @@ function RootComponent() {
 
 export function Layout() {
   return (
-    <div className="p-2 flex gap-2 text-lg">
+    <div className="flex gap-2 p-2 text-lg">
       <NavLinkButton to="/">Home</NavLinkButton>
       <NavLinkButton to="/about">About</NavLinkButton>
     </div>
