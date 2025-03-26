@@ -1,3 +1,4 @@
+import { ThemeToggler } from '@/components/theme/toggler'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { ScryfallService } from '@/lib/scryfall'
@@ -29,14 +30,14 @@ export function Layout() {
   return (
     <header className="flex items-center justify-between p-2">
       <Link to="/">
-        <Button variant="ghost" className="gap-2">
+        <Button variant="ghost" className="gap-2 truncate">
           Scryfall Personal
         </Button>
       </Link>
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost">
+            <Button variant="ghost" size="icon">
               <MenuIcon />
             </Button>
           </DropdownMenuTrigger>
@@ -55,6 +56,7 @@ export function Layout() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <ThemeToggler />
       </div>
     </header>
   )

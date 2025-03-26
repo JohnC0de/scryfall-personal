@@ -7,9 +7,13 @@ import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 import { SearchIcon } from 'lucide-react'
 import { useState } from 'react'
 import { z } from 'zod'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const searchParamsSchema = z.object({
-  q: z.string().optional(),
+  q: z
+    .string()
+    .optional()
+    .transform(q => q?.toLowerCase()),
 })
 
 export const Route = createFileRoute('/search')({
@@ -40,14 +44,17 @@ function SearchComponent() {
   const [search, setSearch] = useState(q)
 
   const navigate = useNavigate()
-  const { data } = useGetCards(q)
+  const { data, isLoading } = useGetCards(q)
 
   const hasImage = data?.data.some(card => card.image_uris?.normal)
 
   return (
     <div className="space-y-2 px-2">
-      <form
+      <motion.form
         className="flex gap-2"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
         onSubmit={e => {
           e.preventDefault()
           navigate({ to: '/search', search: { q: search } })
@@ -59,32 +66,79 @@ function SearchComponent() {
           value={search ?? ''}
           onChange={e => setSearch(e.target.value)}
         />
-        <Button variant="outline" type="submit">
-          <SearchIcon />
-        </Button>
-      </form>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button variant="outline" type="submit">
+            <SearchIcon />
+          </Button>
+        </motion.div>
+      </motion.form>
       <ScrollArea className="h-[calc(100vh-8rem)] rounded-md border">
-        <div className="grid grid-cols-6 gap-2 p-4">
-          {data?.data.map(card => (
-            <div key={card.id} className="flex flex-col">
-              {!hasImage && <p className="truncate">{card.name}</p>}
-              <img
-                src={card.image_uris?.normal ?? '/magic_card_back.png'}
-                alt={card.name}
-                className="rounded-lg transition-opacity duration-200 hover:opacity-90"
-                loading="lazy"
-              />
-            </div>
-          ))}
-          {!q && (
-            <div className="col-span-6 flex h-full items-center justify-center">
-              <p className="text-muted-foreground">Please, use the search bar above to find a card.</p>
-            </div>
+        <div className="xs:grid-cols-2 relative grid grid-cols-1 gap-1 p-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <CardSkeletonGrid key="skeleton" />
+            ) : (
+              <>
+                {data?.data.map((card, index) => (
+                  <motion.div
+                    key={card.id}
+                    className="flex flex-col overflow-hidden"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+                  >
+                    {!hasImage && <p className="truncate text-xs">{card.name}</p>}
+                    <motion.img
+                      src={card.image_uris?.normal ?? '/magic_card_back.png'}
+                      alt={card.name}
+                      className="rounded-md"
+                      loading="lazy"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </motion.div>
+                ))}
+              </>
+            )}
+          </AnimatePresence>
+
+          {!q && data?.data.length === 0 && (
+            <motion.div
+              className="absolute inset-0 flex h-full items-center justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <motion.p
+                className="text-muted-foreground"
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  duration: 0.5,
+                  repeat: Infinity,
+                  repeatType: 'reverse',
+                  repeatDelay: 3,
+                }}
+              >
+                Please, use the search bar above to find a card.
+              </motion.p>
+            </motion.div>
           )}
-          {!data && q && (
-            <div className="col-span-6 flex h-full items-center justify-center">
+
+          {q && (!data || data.data.length === 0) && (
+            <motion.div
+              className="absolute inset-0 flex h-full items-center justify-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
               <p className="text-muted-foreground">No cards named {q} found.</p>
-            </div>
+            </motion.div>
           )}
         </div>
       </ScrollArea>
@@ -94,18 +148,31 @@ function SearchComponent() {
 
 function CardSkeleton() {
   return (
-    <div className="flex flex-col space-y-2">
-      <Skeleton className="h-60 w-full rounded-lg" />
-      <Skeleton className="h-4 w-3/4" />
-    </div>
+    <motion.div
+      className="flex flex-col space-y-1"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Skeleton className="h-40 w-full rounded-md" />
+      <Skeleton className="h-3 w-3/4" />
+    </motion.div>
   )
 }
 
 function CardSkeletonGrid() {
   return (
-    <div className="grid grid-cols-6 gap-2 p-4">
+    <div className="xs:grid-cols-2 grid grid-cols-1 gap-1 p-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
       {Array.from({ length: 24 }).map((_, index) => (
-        <CardSkeleton key={index} />
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: index * 0.05 }}
+        >
+          <CardSkeleton />
+        </motion.div>
       ))}
     </div>
   )
