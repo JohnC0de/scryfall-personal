@@ -45,6 +45,7 @@ bun dev
 - Tailwind CSS - Utility-first styling
 - Shadcn - Accessible UI components
 - Tanstack Query - Data fetching/caching
+- Tanstack Router - Type-safe routing with file-based routes
 - Zustand - State management
 - Zod - Schema validation
 - Axios - API client
