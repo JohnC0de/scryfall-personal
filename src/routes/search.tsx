@@ -53,10 +53,14 @@ function SearchComponent() {
           navigate({ to: '/search', search: { q: search } })
         }}
       >
-        <Input type="text" placeholder="Search" value={search ?? ''} onChange={e => setSearch(e.target.value)} />
+        <Input
+          type="text"
+          placeholder="Search card by name"
+          value={search ?? ''}
+          onChange={e => setSearch(e.target.value)}
+        />
         <Button variant="outline" type="submit">
           <SearchIcon />
-          Search
         </Button>
       </form>
       <ScrollArea className="h-[calc(100vh-8rem)] rounded-md border">
@@ -72,7 +76,12 @@ function SearchComponent() {
               />
             </div>
           ))}
-          {!data && (
+          {!q && (
+            <div className="col-span-6 flex h-full items-center justify-center">
+              <p className="text-muted-foreground">Please, use the search bar above to find a card.</p>
+            </div>
+          )}
+          {!data && q && (
             <div className="col-span-6 flex h-full items-center justify-center">
               <p className="text-muted-foreground">No cards named {q} found.</p>
             </div>

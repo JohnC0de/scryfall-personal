@@ -17,20 +17,22 @@ export const Route = createRootRouteWithContext<RootContext>()({
 
 function RootComponent() {
   return (
-    <>
+    <div className="flex h-screen flex-col">
       <Layout />
       <Outlet />
       <TanStackRouterDevtools position="bottom-right" />
-    </>
+    </div>
   )
 }
 
 export function Layout() {
   return (
     <header className="flex items-center justify-between p-2">
-      <Button variant="ghost" className="gap-2">
-        Scryfall Personal
-      </Button>
+      <Link to="/">
+        <Button variant="ghost" className="gap-2">
+          Scryfall Personal
+        </Button>
+      </Link>
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

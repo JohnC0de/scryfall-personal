@@ -1,7 +1,7 @@
 import { cardNamedSchema } from '@/lib/scryfall/schemas/card-named'
 import { cardListSchema } from '@/lib/scryfall/schemas/card-search'
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { toast } from 'sonner'
 
 export class ScryfallService {
@@ -24,15 +24,14 @@ export class ScryfallService {
       queryKey: ['cards', q],
       queryFn: async () => {
         try {
+          if (!q) return null
           const { data } = await this.api.get(ScryfallService.ENDPOINTS.CARDS_SEARCH, {
             params: { q },
           })
           console.log({ data })
           return cardListSchema.parse(data)
-        } catch (error) {
-          console.error(error)
-          // throw error
-          toast.error('No cards found')
+        } catch (e) {
+          if (e instanceof AxiosError) toast.error(e.response?.data.details ?? e.message)
           return null
         }
       },

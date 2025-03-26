@@ -1,10 +1,11 @@
+import { ThemeProvider } from '@/components/theme/provider'
+import { scryfallService } from '@/lib/scryfall'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import ReactDOM from 'react-dom/client'
-import { routeTree } from './routeTree.gen'
+import { Toaster } from 'sonner'
 import './index.css'
-import { ThemeProvider } from '@/components/theme/provider'
-import { scryfallService } from '@/lib/scryfall'
+import { routeTree } from './routeTree.gen'
 
 const queryClient = new QueryClient()
 
@@ -24,6 +25,7 @@ if (!rootElement.innerHTML) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <RouterProvider router={router} />
+        <Toaster />
       </ThemeProvider>
     </QueryClientProvider>,
   )

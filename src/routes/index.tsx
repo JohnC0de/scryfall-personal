@@ -19,11 +19,11 @@ function LandingPage() {
         </p>
         <div className="flex justify-center gap-4">
           <Button size="lg" className="gap-2">
-            <span>Start Building</span>
+            Build Decks
             <ArrowRightIcon className="h-4 w-4" />
           </Button>
           <Button size="lg" variant="outline" className="gap-2">
-            <span>Browse Cards</span>
+            Find Cards
             <SearchIcon className="h-4 w-4" />
           </Button>
         </div>
@@ -47,7 +47,7 @@ function LandingPage() {
             <Input placeholder="Search for a card..." id="query" name="query" />
             <Button type="submit" variant="secondary">
               <SearchIcon />
-              Search
+              Search card by name
             </Button>
           </form>
         </div>
